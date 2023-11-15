@@ -1,0 +1,3 @@
+npx sequelize-cli migration:generate --name addCategoryIdToProduct -> tambahin foreignkey
+sequelize db:seed:undo:all -> hapus data yang udah di seed
+npx sequelize-cli db:create -> drop db
