@@ -10,18 +10,23 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       userId: {
-        type: Sequelize.INTEGER
+        allowNull: false,
+        type: Sequelize.INTEGER,
       },
       productId: {
+        allowNull: false,
         type: Sequelize.INTEGER
       },
       orderDate: {
+        allowNull: false,
         type: Sequelize.DATE
       },
       status: {
+        allowNull: false,
         type: Sequelize.STRING
       },
       quantity: {
+        allowNull: false,
         type: Sequelize.STRING
       },
       totalPrice: {

@@ -17,3 +17,11 @@ exports.productSchema = Joi.object({
     harga: Joi.number().required(),
     categoryId: Joi.number().integer().required(),
 })
+
+exports.orderSchema = Joi.object({
+    userId: Joi.number().required(),
+    productId: Joi.number().required(),
+    orderDate: Joi.date().required(),
+    status: Joi.string().valid('pending', 'completed').required(),
+    quantity: Joi.number().integer().min(1).required(),
+})
