@@ -35,12 +35,15 @@ exports.addOrder = async (req, res) => {
   
       // Cari produk yang akan dipesan berdasarkan productId
       const product = await Product.findByPk(productId);
+      // console.log(product.harga)
+      // return
   
       if (!product) {
         return res.status(404).json({ message: 'Product not found' });
       }
 
-      const price = quantity * product.harga;
+      const totalPrice = quantity * product.harga;
+
   
       // Buat pesanan baru
       await Order.create({
@@ -49,10 +52,13 @@ exports.addOrder = async (req, res) => {
         orderDate,
         status,
         quantity,
-        price
+        totalPrice
       });
 
       const response = await User.findAll({
+        where: {
+          id: userId 
+        },
         include: Product
     });
   
@@ -62,4 +68,36 @@ exports.addOrder = async (req, res) => {
       console.error(error);
       res.status(500).json({ message: 'Terjadi kesalahan server' });
     }
-  };
+};
+
+exports.deleteOrder = async (req, res) => {
+  try{
+    const orderId = req.params.orderId; // atau sesuaikan dengan nama parameter di route Anda
+    const userId = req.params.userId; // asumsikan Anda juga menerima userId sebagai parameter
+
+    // Cari order berdasarkan orderId dan userId
+    const order = await Order.findOne({
+      where: {
+        id: orderId,  // Pastikan bahwa ini adalah nama kolom untuk order ID di tabel Orders
+        userId: userId // Pastikan bahwa ini adalah nama kolom untuk user ID di tabel Orders
+      }
+    });
+
+    // Jika order tidak ditemukan, kembalikan respons 404
+    if (!order) {
+      return res.status(404).json({ message: 'Order not found' });
+    }
+
+    // Hapus order
+    await order.destroy();
+
+     // Kembalikan respons berhasil
+     res.status(200).json({ message: 'Order successfully deleted' });
+
+  }catch(error){
+    console.log(error)
+    res.status(500).json({ message: 'Internal server error' });
+  }
+}
+
+
