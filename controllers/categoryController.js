@@ -7,7 +7,7 @@ exports.getCategory = async (req, res) => {
         res.status(200).json({ data: response, message: 'Success' })
     }catch(error){
         console.log(error)
-        res.status(500).json({ message: 'Terjadi kesalahan dalam menampilkan list user' });
+        res.status(500).json({ message: 'Terjadi kesalahan dalam menampilkan list category' });
     }
 }
 
@@ -39,6 +39,7 @@ exports.addCategory = async (req, res) => {
 
 exports.updateCategory = async (req, res) => {
     try{
+        const categoryId = req.params.id;
         const { title } = req.body;
 
         const { error } = categorySchema.validate({ title });
@@ -47,8 +48,42 @@ exports.updateCategory = async (req, res) => {
             return res.status(400).json({ message: error.details[0].message });
         }
 
+         // Cari category berdasarkan ID
+        const category = await Category.findByPk(categoryId);
+        if (!category) {
+            return res.status(404).json({ message: 'Category not found' });
+        }
+
+         // Cari category berdasarkan ID
+         await category.update({ title });
+
+         // Kembalikan respons sukses
+         res.status(200).json({ message: 'Category successfully updated', category });
     }catch(error){
         console.error(error);
         res.status(500).json({ message: 'Terjadi kesalahan dalam edit category' });
     }
 }
+
+exports.deleteCategory = async (req, res) => {
+    try {
+      const categoryId = req.params.id;
+  
+      // Cari category yang akan dihapus
+      const category = await Category.findByPk(categoryId);
+  
+      // Jika category tidak ditemukan, kembalikan respons 404
+      if (!category) {
+        return res.status(404).json({ message: 'Category not found' });
+      }
+  
+      // Hapus category
+      await category.destroy();
+  
+      // Kembalikan respons berhasil
+      res.status(200).json({ message: 'Category successfully deleted' });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Internal server error' });
+    }
+};
